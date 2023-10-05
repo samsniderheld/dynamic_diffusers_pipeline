@@ -4,3 +4,8 @@ compel
 accelerate
 gradio
 controlnet_aux
+xformers
+bitsandbytes
+accelerate
+safetensors
+omegaconf
