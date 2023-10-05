@@ -1,0 +1,6 @@
+diffusers
+transformers
+compel
+accelerate
+gradio
+controlnet_aux

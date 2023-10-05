@@ -1,0 +1,31 @@
+{
+    "pipelines": [
+      {
+        "type": "text2img",
+        "model": "SG161222/Realistic_Vision_V1.4",
+        "interface": {
+            "control_net":{
+                "type": "openpose_full",
+                "model": "lllyasviel/sd-controlnet-openpose",
+                "interface": {
+                    "inputs": [
+                        "text"
+                    ]
+                }
+            },
+            "inputs": [
+                "prompt",
+                "negative_prompt",
+                "image",
+                "controlnet_strength",
+                "cfg",
+                "steps"
+
+            ],
+            "outputs": [
+                "image"
+            ]
+        }
+        }
+    ]
+}
