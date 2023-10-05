@@ -2,11 +2,11 @@
     "pipelines": [
       {
         "type": "text2img",
-        "model": "SG161222/Realistic_Vision_V1.4",
+        "model": "sokolovski",
         "interface": {
             "control_net":{
-                "type": "openpose_full",
-                "model": "lllyasviel/sd-controlnet-openpose",
+                "type": "depth_midas",
+                "model": "lllyasviel/sd-controlnet-depth",
                 "interface": {
                     "inputs": [
                         "text"
