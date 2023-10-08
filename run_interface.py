@@ -1,7 +1,10 @@
 import json
+import os
 from load_pipelines import get_pipeline
 from create_interface import create_gradio_interface
 
+# Create the output directory if it doesn't exist
+os.makedirs("outputs", exist_ok=True)
 
 with open('config.json', 'r') as file:
     pipelines = json.load(file)

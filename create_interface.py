@@ -17,6 +17,7 @@ def create_pipeline_function(pipeline,interface_config):
     controlnet_strength = params['controlnet_strength'] if "controlnet_strength" in interface_config['inputs'] else .8
     cfg = params['cfg'] if "cfg" in interface_config['inputs'] else 3.5
     steps = params['steps'] if "steps" in interface_config['inputs'] else 20
+    num_samples = params['num_samples'] if "num_samples" in interface_config['inputs'] else 1
 
     if("control_net" in interface_config):
       init_img = Image.fromarray(init_img).resize((512,512))
@@ -25,35 +26,45 @@ def create_pipeline_function(pipeline,interface_config):
 
       processed_img = processor(init_img)
 
-      random_seed = random.randrange(0,10000)
+      out_imgs = []
 
-      output_img = pipeline(prompt = prompt,
-                      negative_prompt = negative_prompt,
-                      image= processed_img,
-                      controlnet_conditioning_scale=controlnet_strength,
-                      height=512,
-                      width=512,
-                      num_inference_steps=steps, generator=torch.Generator(device='cuda').manual_seed(random_seed),
-                      guidance_scale = cfg).images[0]
+      for i in range(num_samples):
 
-      output = np.hstack([processed_img, output_img])
+        random_seed = random.randrange(0,10000)
 
-      return output
+        output_img = pipeline(prompt = prompt,
+                        negative_prompt = negative_prompt,
+                        image= processed_img,
+                        controlnet_conditioning_scale=controlnet_strength,
+                        height=512,
+                        width=512,
+                        num_inference_steps=steps, generator=torch.Generator(device='cuda').manual_seed(random_seed),
+                        guidance_scale = cfg).images[0]
+
+        output = np.hstack([processed_img, output_img])
+
+        out_imgs.append(output)
+
+        output_img.save(f"outputs/{i:04d}.png")
+
+      return out_imgs
 
     else:
 
-      random_seed = random.randrange(0,10000)
+      for i in range(num_samples):
 
-      texture_image = pipeline(prompt = prompt,
-                      negative_prompt = negative_prompt,
-                      height=512,
-                      width=512,
-                      num_inference_steps=steps, generator=torch.Generator(device='cuda').manual_seed(random_seed),
-                      guidance_scale = cfg).images[0]
+        random_seed = random.randrange(0,10000)
 
+        output_img = pipeline(prompt = prompt,
+                        negative_prompt = negative_prompt,
+                        height=512,
+                        width=512,
+                        num_inference_steps=steps, generator=torch.Generator(device='cuda').manual_seed(random_seed),
+                        guidance_scale = cfg).images[0]
 
+        output_img.save(f"outputs/{i:04d}.png")
 
-      return texture_image
+      return output_img
 
   return pipeline_function
 
@@ -90,6 +101,10 @@ def create_gradio_interface(pipeline, pipeline_conf):
                 steps_input = gr.Slider(1, 100, value=20, label="Steps")
                 inputs.append(steps_input)
 
+            if(input == "num_samples"):
+                num_samples_input = gr.Slider(1, 100, value=1, label="num samples")
+                inputs.append(num_samples_input)
+
 
     if(interface["outputs"]):
         for output in interface["outputs"]:
@@ -99,6 +114,9 @@ def create_gradio_interface(pipeline, pipeline_conf):
             if(output == "image"):
                 image_output = gr.Image(label="Image")
                 outputs.append(image_output)
+            if(output == "gallery"):
+                gallery_output = gr.Gallery(label="Image")
+                outputs.append(gallery_output)
 
     pipeline_function = create_pipeline_function(pipeline, interface)
 
