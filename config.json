@@ -19,11 +19,12 @@
                 "image",
                 "controlnet_strength",
                 "cfg",
-                "steps"
+                "steps",
+                "num_samples"
 
             ],
             "outputs": [
-                "image"
+                "gallery"
             ]
         }
         }
