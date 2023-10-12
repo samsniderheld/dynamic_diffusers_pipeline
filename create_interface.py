@@ -20,7 +20,10 @@ def create_pipeline_function(pipeline,interface_config):
     num_samples = params['num_samples'] if "num_samples" in interface_config['inputs'] else 1
 
     if("control_net" in interface_config):
-      init_img = Image.fromarray(init_img).resize((512,512))
+      
+      init_img = Image.fromarray(init_img)
+      init_img_dims = init_img.size()
+      init_img = init_img.resize((512,512))
 
       processor = Processor(interface_config["control_net"]["type"])
 
@@ -41,7 +44,8 @@ def create_pipeline_function(pipeline,interface_config):
                         num_inference_steps=steps, generator=torch.Generator(device='cuda').manual_seed(random_seed),
                         guidance_scale = cfg).images[0]
 
-        output = np.hstack([processed_img, output_img])
+        output = np.hstack([processed_img.resize(init_img_dims), 
+                            output_img.resize(init_img_dims)])
 
         out_imgs.append(output)
 
