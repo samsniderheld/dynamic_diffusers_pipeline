@@ -1,5 +1,6 @@
 from diffusers import (ControlNetModel,StableDiffusionControlNetPipeline,
-                       StableDiffusionPipeline,StableDiffusionImg2ImgPipeline
+                       StableDiffusionPipeline,StableDiffusionImg2ImgPipeline,
+                       DiffusionPipeline
 )
 from diffusers import UniPCMultistepScheduler
 
@@ -15,7 +16,7 @@ def get_pipeline(pipeline_conf):
         model = pipeline_conf['interface']['control_net']['model']
         controlnet = get_controlnet_pipeline(model)
         if pipeline_conf["type"] == "img2img":
-           pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
+           pipe = DiffusionPipeline.from_pretrained(
                 pipeline_conf['model'],
                 custom_pipeline="stable_diffusion_controlnet_img2img",
                 controlnet=controlnet,
