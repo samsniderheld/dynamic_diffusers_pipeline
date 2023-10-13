@@ -65,7 +65,7 @@ def create_pipeline_function(pipeline,interface_config):
 
             output_img = pipeline(prompt = prompt,
                             negative_prompt = negative_prompt,
-                            control_net_conditioning_image = processed_img,
+                            controlnet_conditioning_image = processed_img,
                             image = img2img_img,
                             controlnet_conditioning_scale=controlnet_strength,
                             height=512,
@@ -117,8 +117,8 @@ def create_pipeline_function(pipeline,interface_config):
                             generator=torch.Generator(device='cuda').manual_seed(random_seed),
                             guidance_scale = cfg).images[0]
             
-            output = np.hstack([processed_img.resize(controlnet_img_dims), 
-                            output_img.resize(controlnet_img_dims)])
+            output = np.hstack([img2img_img.resize(img2img_dims), 
+                            output_img.resize(img2img_dims)])
             
 
         out_imgs.append(output_img)
