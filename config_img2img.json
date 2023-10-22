@@ -1,0 +1,23 @@
+{
+    "pipelines": [
+      {
+        "type": "img2img",
+        "model": "dancinc",
+        "interface": {
+            "inputs": [
+                "prompt",
+                "negative_prompt",
+                "img2img_image",
+                "img2img_strength",
+                "cfg",
+                "steps",
+                "num_samples"
+
+            ],
+            "outputs": [
+                "gallery"
+            ]
+        }
+        }
+    ]
+}
