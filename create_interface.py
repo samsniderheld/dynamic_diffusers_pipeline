@@ -10,6 +10,8 @@ def create_pipeline_function(pipeline,interface_config):
   
   pipeline_type = interface_config["type"]
 
+  print(pipeline_type)
+
   interface_config = interface_config["interface"]
 
   def pipeline_function(*args):
@@ -28,7 +30,7 @@ def create_pipeline_function(pipeline,interface_config):
     out_imgs = []
     
     if("control_net" in interface_config):
-      
+      print("control")
       controlnet_img = Image.fromarray(controlnet_img)
       controlnet_img_dims = controlnet_img.size
       controlnet_img = controlnet_img.resize((512,512))
@@ -54,11 +56,13 @@ def create_pipeline_function(pipeline,interface_config):
                             num_inference_steps=steps,
                             generator=torch.Generator(device='cuda').manual_seed(random_seed),
                             guidance_scale = cfg).images[0]
+            output_img = output_img.resize(controlnet_img_dims)
             
-            output = np.hstack([processed_img.resize(controlnet_img_dims), 
-                            output_img.resize(controlnet_img_dims)])
+            output = output_img
+            # output = np.hstack([processed_img.resize(controlnet_img_dims), 
+            #                 output_img.resize(controlnet_img_dims)])
         
-        elif((pipeline_type == "img2img")):
+        elif(pipeline_type == "img2img"):
 
             img2img_img = Image.fromarray(img2img_img)
             img2img_img = img2img_img.resize((512,512))
@@ -80,6 +84,7 @@ def create_pipeline_function(pipeline,interface_config):
                                 output_img.resize(controlnet_img_dims)])
 
         out_imgs.append(output)
+        
 
         output_img.save(f"outputs/{i:04d}.png")
 
@@ -93,13 +98,14 @@ def create_pipeline_function(pipeline,interface_config):
 
         if(pipeline_type == "text2img"):
 
-            output_img = pipeline(prompt = prompt,
-                            negative_prompt = negative_prompt,
-                            height=512,
-                            width=512,
-                            num_inference_steps=steps, 
-                            generator=torch.Generator(device='cuda').manual_seed(random_seed),
-                            guidance_scale = cfg).images[0]
+          print("hello")
+          output_img = pipeline(prompt = prompt,
+                          negative_prompt = negative_prompt,
+                          height=512,
+                          width=512,
+                          num_inference_steps=steps, 
+                          generator=torch.Generator(device='cuda').manual_seed(random_seed),
+                          guidance_scale = cfg).images[0]
             
             
 
@@ -117,8 +123,10 @@ def create_pipeline_function(pipeline,interface_config):
                             generator=torch.Generator(device='cuda').manual_seed(random_seed),
                             guidance_scale = cfg).images[0]
             
-            output = np.hstack([img2img_img.resize(img2img_dims), 
-                            output_img.resize(img2img_dims)])
+            output_img = output_img.resize(img2img_dims)
+            
+            # output = np.hstack([img2img_img.resize(img2img_dims), 
+            #                 output_img.resize(img2img_dims)])
             
 
         out_imgs.append(output_img)

@@ -1,0 +1,32 @@
+{
+    "pipelines": [
+      {
+        "type": "text2img",
+        "model": "sokolovski",
+        "interface": {
+            "control_net":{
+                "type": "canny",
+                "model": "lllyasviel/sd-controlnet-canny",
+                "interface": {
+                    "inputs": [
+                        "text"
+                    ]
+                }
+            },
+            "inputs": [
+                "prompt",
+                "negative_prompt",
+                "controlnet_image",
+                "controlnet_strength",
+                "cfg",
+                "steps",
+                "num_samples"
+
+            ],
+            "outputs": [
+                "gallery"
+            ]
+        }
+        }
+    ]
+}
